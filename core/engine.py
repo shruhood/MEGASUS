@@ -1,6 +1,8 @@
 """
 MEGASUS Core Engine - ADB Command Runner & Device Manager
-Head developer mode: built for speed, zero bloat, maximum control
+Built for speed, zero bloat, maximum control
+
+Author: Suraj Singh (@shruhood) — Bakweb, SunDial Technologies, Cyber SunDial
 """
 import subprocess
 import os

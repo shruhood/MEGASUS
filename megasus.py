@@ -1,7 +1,12 @@
 """
 MEGASUS - Ultimate Android Device Control Toolkit
 Main entry point - Interactive menu system
-Built by a hacker, for hackers. No license keys, no encryption, full power.
+
+Author: Suraj Singh (@shruhood)
+Organizations: Bakweb, SunDial Technologies, Cyber SunDial
+Emails: shruhood@gmail.com, ibakeweb@gmail.com
+GitHub: https://github.com/shruhood/MEGASUS
+WhatsApp: https://whatsapp.com/channel/0029Vb7eYJP5PO0vRy786z46
 """
 import os
 import sys
