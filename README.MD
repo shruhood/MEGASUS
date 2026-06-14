@@ -56,11 +56,11 @@
 
 <div align="center">
 
-### Main Menu
-![MEGASUS PRO Main Menu](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/MagasusJPG.JPG)
-
 ### Login
 ![Login Screen](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/login.JPG)
+
+### Main Menu
+![MEGASUS PRO Main Menu](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/MagasusJPG.JPG)
 
 </div>
 
