@@ -1,19 +1,18 @@
 <div align="center">
 
-```
-███╗   ███╗███████╗ ██████╗  █████╗ ███████╗██╗   ██╗███████╗
-████╗ ████║██╔════╝██╔════╝ ██╔══██╗██╔════╝██║   ██║██╔════╝
-██╔████╔██║█████╗  ██║  ███╗███████║███████╗██║   ██║███████╗
-██║╚██╔╝██║██╔══╝  ██║   ██║██╔══██║╚════██║██║   ██║╚════██║
-██║ ╚═╝ ██║███████╗╚██████╔╝██║  ██║███████║╚██████╔╝███████║
-╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝
-                          P R O
-```
 
-https://github.com/shruhood/MEGASUS/blob/main/screenshots/login.JPG
+                          ███╗   ███╗███████╗ ██████╗  █████╗ ███████╗██╗   ██╗███████╗
+                          ████╗ ████║██╔════╝██╔════╝ ██╔══██╗██╔════╝██║   ██║██╔════╝
+                          ██╔████╔██║█████╗  ██║  ███╗███████║███████╗██║   ██║███████╗
+                          ██║╚██╔╝██║██╔══╝  ██║   ██║██╔══██║╚════██║██║   ██║╚════██║
+                          ██║ ╚═╝ ██║███████╗╚██████╔╝██║  ██║███████║╚██████╔╝███████║
+                          ╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝
+                                                                              P R O
+```
 
 ### Android Device Operations Platform
 
+![Release](https://img.shields.io/badge/release-v1.0.0-1e40af?style=flat-square&labelColor=2d3748)
 ![Python](https://img.shields.io/badge/python-3.8+-1e40af?style=flat-square&labelColor=2d3748)
 ![License](https://img.shields.io/badge/license-MIT-065f46?style=flat-square&labelColor=2d3748)
 ![Platform](https://img.shields.io/badge/platform-Android%208+-92400e?style=flat-square&labelColor=2d3748)
@@ -35,8 +34,6 @@ https://github.com/shruhood/MEGASUS/blob/main/screenshots/login.JPG
 **MEGASUS PRO** is an enterprise-grade, open-source Android operations platform built on ADB. Manage single devices or entire fleets, automate repetitive workflows, audit device security posture, and extract comprehensive telemetry — all from a clean, unified terminal interface.
 
 ```
-https://github.com/shruhood/MEGASUS/blob/main/screenshots/MagasusJPG.JPG
-
 ╔══════════════════════════════════════════════════════╗
 ║              MEGASUS PRO  v1.0.0                     ║
 ║          Android Operations Platform                 ║
@@ -52,6 +49,44 @@ https://github.com/shruhood/MEGASUS/blob/main/screenshots/MagasusJPG.JPG
 ║  Select module [1-10]: █                             ║
 ╚══════════════════════════════════════════════════════╝
 ```
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+### Main Menu
+![MEGASUS PRO Main Menu](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/MagasusJPG.JPG)
+
+### Login
+![Login Screen](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/login.JPG)
+
+</div>
+
+---
+
+### Module Previews
+
+| Connection Manager | App Manager |
+|:-:|:-:|
+| ![Connection Manager](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/connection%20manager.JPG) | ![App Manager](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/app%20manager.JPG) |
+
+| Data Extraction | Network Tools |
+|:-:|:-:|
+| ![Data Extraction](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/data%20extraction.JPG) | ![Network Tools](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/network%20tools.JPG) |
+
+| Screen Tools | Security Audit |
+|:-:|:-:|
+| ![Screen Tools](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/screen%20tool.JPG) | ![Security Audit](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/sequrity%20audit.JPG) |
+
+<div align="center">
+
+### Automation & Scripts
+![Automation & Scripts](https://raw.githubusercontent.com/shruhood/MEGASUS/main/screenshots/AUTOMATION%20%26%20SCRIPTS.JPG)
+
+</div>
+
 
 ---
 
