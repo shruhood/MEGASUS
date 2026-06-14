@@ -15,7 +15,7 @@ MEGASUS is built by **Suraj Singh** across multiple ventures:
 
 | Organization | Focus |
 |-------------|-------|
-| **Bakweb** | Web development & digital solutions |
+| **Bakweb** | Web development & digital solutions | hello@bakeweb.in · ibakeweb@gmail.com · [bakeweb.in](https://bakeweb.in) |
 | **SunDial Technologies** | Technology products & services |
 | **Cyber SunDial** | Cybersecurity & infrastructure |
 

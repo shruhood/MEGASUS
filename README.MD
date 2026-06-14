@@ -696,7 +696,7 @@ function switchTab(name) {
 
 MEGASUS is built by **Suraj Singh** across multiple ventures:
 
-- **Bakweb** — [ibakeweb@gmail.com](mailto:ibakeweb@gmail.com)
+- **Bakweb** — [hello@bakeweb.in](mailto:hello@bakeweb.in) · [ibakeweb@gmail.com](mailto:ibakeweb@gmail.com) · [bakeweb.in](https://bakeweb.in)
 - **SunDial Technologies** — [shruhood@gmail.com](mailto:shruhood@gmail.com)
 - **Cyber SunDial** — [shruhood@gmail.com](mailto:shruhood@gmail.com)
 

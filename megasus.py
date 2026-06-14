@@ -4,7 +4,8 @@ Main entry point - Interactive menu system
 
 Author: Suraj Singh (@shruhood)
 Organizations: Bakweb, SunDial Technologies, Cyber SunDial
-Emails: shruhood@gmail.com, ibakeweb@gmail.com
+Emails: shruhood@gmail.com, hello@bakeweb.in, ibakeweb@gmail.com
+Website: https://bakeweb.in
 GitHub: https://github.com/shruhood/MEGASUS
 WhatsApp: https://whatsapp.com/channel/0029Vb7eYJP5PO0vRy786z46
 """
