@@ -10,9 +10,10 @@
                           P R O
 ```
 
+https://github.com/shruhood/MEGASUS/blob/main/screenshots/login.JPG
+
 ### Android Device Operations Platform
 
-![Release](https://img.shields.io/badge/release-v1.0.0-1e40af?style=flat-square&labelColor=2d3748)
 ![Python](https://img.shields.io/badge/python-3.8+-1e40af?style=flat-square&labelColor=2d3748)
 ![License](https://img.shields.io/badge/license-MIT-065f46?style=flat-square&labelColor=2d3748)
 ![Platform](https://img.shields.io/badge/platform-Android%208+-92400e?style=flat-square&labelColor=2d3748)
@@ -34,6 +35,8 @@
 **MEGASUS PRO** is an enterprise-grade, open-source Android operations platform built on ADB. Manage single devices or entire fleets, automate repetitive workflows, audit device security posture, and extract comprehensive telemetry — all from a clean, unified terminal interface.
 
 ```
+https://github.com/shruhood/MEGASUS/blob/main/screenshots/MagasusJPG.JPG
+
 ╔══════════════════════════════════════════════════════╗
 ║              MEGASUS PRO  v1.0.0                     ║
 ║          Android Operations Platform                 ║
