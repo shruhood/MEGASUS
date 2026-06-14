@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+logs/
+!logs/README.md
+screenshot/
+!screenshot/README.md
+.env

@@ -1,0 +1,33 @@
+# MEGASUS - Ultimate Android Device Control Toolkit
+# config.yaml
+adb:
+  path: "C:\\Users\\shruh\\AppData\\Local\\Android\\Sdk\\platform-tools"
+  auto_start_server: true
+
+auth:
+  enabled: true
+  admin_password: "megasus2026"
+  operator_password: "operator2026"
+  session_timeout_minutes: 30
+
+logging:
+  enabled: true
+  log_dir: "logs"
+  log_commands: true
+  log_output: false
+
+display:
+  theme: "dark"
+  banner: true
+  colors: true
+
+connection:
+  default_timeout: 10
+  wireless_port: 5555
+  auto_reconnect: true
+
+dashboard:
+  enabled: false
+  host: "0.0.0.0"
+  port: 8080
+  secret_key: "megasus-secret-change-this"

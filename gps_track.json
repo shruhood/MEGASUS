@@ -1,0 +1,10 @@
+[
+  {
+    "time": "2026-06-14 04:18:36",
+    "data": "last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h36m33s784ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]\n        last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h36m33s784ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]\n        last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h36m33s784ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]"
+  },
+  {
+    "time": "2026-06-14 04:19:26",
+    "data": "last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h37m10s792ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]\n        last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h37m10s792ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]\n        last location=Location[network 20.256256,73.011441 hAcc=100.0 et=+1h37m10s792ms alt=-0.29999998211860657 vAcc=100.0 mslAlt=63.993422793691494 mslAltAcc=100.00037]"
+  }
+]
