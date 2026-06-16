@@ -25,6 +25,7 @@ from core.engine import (
 )
 from core.auth import AuthManager, ROLES
 from core.logger import log, get_logs
+from core.plugin import load_plugins, list_plugins
 from modules import device, apps, files, connection
 from modules import data, screen, network, security, surveillance, automation
 
@@ -1265,6 +1266,67 @@ def menu_automation():
 
 
 # ── Main Menu ──────────────────────────────────────────────────
+
+
+def menu_plugins():
+    """Plugin Manager Menu"""
+    while True:
+        print_header("🔌 PLUGIN MANAGER")
+        plugins = list_plugins()
+        if not plugins:
+            print(f"  {Fore.YELLOW}No plugins found.{Style.RESET_ALL}")
+            pause()
+            break
+        print("  Installed plugins: " + str(len(plugins)))
+        print()
+        plugin_list = []
+        for name, p in sorted(plugins.items()):
+            info = p.get("info", {})
+            error = p.get("error")
+            version = info.get("version", "?")
+            desc = info.get("description", "")[:50]
+            if error:
+                status = f"{Fore.RED}ERROR{Style.RESET_ALL}"
+            else:
+                status = f"{Fore.GREEN}OK{Style.RESET_ALL}"
+            idx = len(plugin_list) + 1
+            plugin_list.append((name, p))
+            print(f"  {Fore.CYAN}{idx:2d}.{Style.RESET_ALL} {name} v{version} ({status}) - {desc}")
+        print()
+        print_menu({"S": "Start a plugin", "R": "Reload plugins", "0": "Back to main menu"})
+        choice = input(f"  {Fore.YELLOW}Choice: {Style.RESET_ALL}").strip().upper()
+        if choice == "0":
+            break
+        elif choice == "R":
+            continue
+        elif choice == "S":
+            if not plugin_list:
+                continue
+            idx_str = input("  Enter plugin number: ").strip()
+            try:
+                idx = int(idx_str) - 1
+                if 0 <= idx < len(plugin_list):
+                    name, p = plugin_list[idx]
+                    info = p.get("info", {})
+                    plugin_obj = info.get("plugin")
+                    if plugin_obj and hasattr(plugin_obj, "run"):
+                        print(f"  Starting {name}... (Ctrl+C to stop)")
+                        try:
+                            plugin_obj.run()
+                        except KeyboardInterrupt:
+                            print(f"\n  {name} stopped.")
+                            if hasattr(plugin_obj, "stop"):
+                                plugin_obj.stop()
+                    else:
+                        print(f"  {Fore.YELLOW}{name} has no run() method.{Style.RESET_ALL}")
+                else:
+                    print(f"  {Fore.RED}Invalid number.{Style.RESET_ALL}")
+            except ValueError:
+                print(f"  {Fore.RED}Invalid input.{Style.RESET_ALL}")
+            pause()
+
+
+
 def main_menu():
     """Main interactive menu"""
     global session_token
@@ -1329,7 +1391,11 @@ def main_menu():
             "8": f"{security.MODULE_ICON} Security Audit",
             "9": f"{surveillance.MODULE_ICON} Surveillance & Monitoring",
             "10": f"{automation.MODULE_ICON} Automation & Scripts",
+            "P": "Plugin Manager",
+            "P": "Plugin Manager",
+            "P": "Plugin Manager",
             "L": "View audit logs",
+            "P": "Plugin Manager",
             "Q": "Quit MEGASUS",
         })
 
@@ -1359,6 +1425,14 @@ def main_menu():
             menu_surveillance()
         elif choice == "10":
             menu_automation()
+        elif choice == "P":
+            menu_plugins()
+        elif choice == "P":
+            menu_plugins()
+        elif choice == "P":
+            menu_plugins()
+        elif choice == "P":
+            menu_plugins()
         elif choice == "L":
             logs = get_logs(lines=50)
             if logs:
