@@ -24,6 +24,7 @@ from typing import Any, Optional
 from pathlib import Path
 
 from core.plugin import Plugin
+from llm_provider import LLMProvider, PROVIDERS
 
 logger = logging.getLogger("ai_agent")
 
@@ -32,6 +33,7 @@ MEMORY_DIR = BASE_DIR / "memory"
 RULES_FILE = BASE_DIR / "rules.json"
 LEARNING_FILE = BASE_DIR / "learning.json"
 CONTEXT_FILE = BASE_DIR / "context.json"
+LLM_CONFIG_FILE = BASE_DIR / "llm_config.json"
 
 for d in [MEMORY_DIR]:
     d.mkdir(exist_ok=True)
@@ -598,9 +600,34 @@ class AIAgentPlugin(Plugin):
         self.engine = ExecutionEngine(self)
         self.memory = LearningMemory()
         self.comm = CommunicationLayer()
+        self.llm = self._load_llm_config()
         self._running = False
         self._thread: Optional[threading.Thread] = None
         self._proactive_rules: list[dict] = self._load_rules()
+
+    def _load_llm_config(self) -> LLMProvider:
+        """Load LLM config from plugin config.json."""
+        cfg = {}
+        if LLM_CONFIG_FILE.exists():
+            try:
+                with open(LLM_CONFIG_FILE) as f:
+                    cfg = json.load(f)
+            except Exception:
+                pass
+        return LLMProvider(
+            provider=cfg.get("provider", ""),
+            api_key=cfg.get("api_key", ""),
+            model=cfg.get("model", ""),
+        )
+
+    def _save_llm_config(self) -> None:
+        cfg = {
+            "provider": self.llm.provider,
+            "api_key": self.llm.api_key,
+            "model": self.llm.model,
+        }
+        with open(LLM_CONFIG_FILE, "w") as f:
+            json.dump(cfg, f, indent=2)
 
     def _load_rules(self) -> list[dict]:
         if RULES_FILE.exists():
@@ -635,7 +662,10 @@ class AIAgentPlugin(Plugin):
         plan = plans[0]
 
         if plan["type"] == "unknown":
-            return f"🤔 I don't understand: '{user_input}'\nTry: 'battery status', 'take screenshot', 'open chrome', 'list apps'"
+            # Fallback to LLM if configured
+            if self.llm._is_configured():
+                return self._llm_ask(user_input, ctx)
+            return f"🤔 I don't understand: '{user_input}'\nTry: 'battery status', 'take screenshot', 'open chrome', 'list apps'\nOr set up LLM: type 'llm setup'"
 
         # Execute
         result = self.engine.execute(plan)
@@ -645,6 +675,23 @@ class AIAgentPlugin(Plugin):
 
         # Respond
         return self.comm.format_result(result)
+
+    def _llm_ask(self, user_input: str, ctx: dict) -> str:
+        """Use LLM to interpret and respond to user input."""
+        system = (
+            "You are MEGASUS AI Agent, controlling an Android device via ADB. "
+            "Be concise. When asked to do something, respond with ONLY the ADB shell command. "
+            "When asked for status/info, summarize the device context. "
+            "Keep responses under 200 words.\n\n"
+            f"Device: {ctx.get('device', {}).get('model', '?')}\n"
+            f"Android: {ctx.get('device', {}).get('android', '?')}\n"
+            f"Battery: {ctx.get('battery', {}).get('level', '?')}%\n"
+            f"IP: {ctx.get('network', {}).get('ip', '?')}\n"
+        )
+        text, err = self.llm.chat(user_input, system_prompt=system, max_tokens=300)
+        if err:
+            return f"⚠️ LLM error: {err}"
+        return f"🤖 {text}"
 
     # ── Proactive mode: monitor → alert → act ──────────────────
 
@@ -742,10 +789,88 @@ class AIAgentPlugin(Plugin):
                 else:
                     print("  ✅ All clear — no anomalies detected")
                 continue
+            if user_input.lower() in ("llm setup", "llm", "ai setup"):
+                self._llm_setup_menu()
+                continue
 
             # Normal query
             response = self.ask(user_input)
             print(f"  {response}")
+
+    def _llm_setup_menu(self):
+        """Interactive LLM provider setup."""
+        print("\n  ╔══════════════════════════════════════╗")
+        print("  ║  🧠 LLM PROVIDER SETUP              ║")
+        print("  ╚══════════════════════════════════════╝")
+
+        providers = LLMProvider.list_providers()
+        for i, p in enumerate(providers):
+            status = "✅" if p["has_key"] else "❌"
+            ptype = p["type"].upper() if p["type"] != "api" else "API"
+            print(f"  {i+1}. {status} {p['name']:30s} [{ptype}]")
+
+        print(f"\n  Current: {self.llm.provider or 'None'} / {self.llm.model or 'None'}")
+        print("  Enter number to select, 'test' to test, or '0' to cancel")
+
+        choice = input("\n  Choice: ").strip()
+        if choice == "0":
+            return
+        if choice.lower() == "test":
+            ok, msg = self.llm.health_check()
+            print(f"  {'✅' if ok else '❌'} {msg}")
+            return
+
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(providers):
+                p = providers[idx]
+                provider_id = p["id"]
+
+                # If API type and no key, ask for it
+                api_key = ""
+                if p["type"] == "api" and not p["has_key"]:
+                    api_key = input(f"  Enter {p['name']} API key: ").strip()
+                    if not api_key:
+                        print("  Cancelled — no key provided")
+                        return
+                elif p["type"] == "api":
+                    # Already has key from env
+                    api_key = "from_env"
+
+                # Choose model
+                models = p.get("models", [])
+                model = p.get("default_model", "")
+                if models:
+                    print(f"\n  Available models:")
+                    for j, m in enumerate(models):
+                        marker = " ← default" if m == p.get("default_model") else ""
+                        print(f"    {j+1}. {m}{marker}")
+                    mi = input(f"  Model number (Enter=default): ").strip()
+                    if mi.isdigit() and 1 <= int(mi) <= len(models):
+                        model = models[int(mi) - 1]
+
+                # Test connection
+                print(f"\n  Testing {p['name']}...", end=" ", flush=True)
+                if api_key == "from_env":
+                    test_key = ""
+                else:
+                    test_key = api_key
+                ok, msg = LLMProvider.test_key(provider_id, test_key, model)
+                if ok:
+                    print("✅ OK!")
+                    self.llm = LLMProvider(provider_id, api_key, model)
+                    self._save_llm_config()
+                    print(f"  Saved: {p['name']} / {model}")
+                else:
+                    print(f"❌ {msg}")
+                    save = input("  Save anyway? (y/n): ").strip().lower()
+                    if save == "y":
+                        self.llm = LLMProvider(provider_id, api_key, model)
+                        self._save_llm_config()
+            else:
+                print("  Invalid number")
+        except ValueError:
+            print("  Invalid input")
 
     def start_proactive(self, interval: int = 30):
         """Start proactive monitoring in background."""

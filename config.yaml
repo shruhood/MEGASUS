@@ -24,3 +24,24 @@ dashboard:
   host: 0.0.0.0
   port: 8080
   secret_key: megasus-secret-change-this
+
+# ── LLM Provider Config ─────────────────────────────────────
+# API keys can also be set via environment variables.
+# Priority: llm_config.json (plugin) > config.yaml > env vars
+llm:
+  # Default provider: openrouter, openai, gemini, claude, hermes, openclaw, claude-code
+  provider: ""
+  api_key: ""
+  model: ""
+
+  # Individual provider keys (alternative to single provider above)
+  openrouter_api_key: ""
+  openai_api_key: ""
+  gemini_api_key: ""
+  claude_api_key: ""
+
+  # Local gateway settings
+  hermes_url: "http://localhost:11434/v1/chat/completions"
+  hermes_model: "hermes-4-technical"
+  openclaw_url: "http://localhost:3000/v1/chat/completions"
+  openclaw_model: "openclaw-default"
