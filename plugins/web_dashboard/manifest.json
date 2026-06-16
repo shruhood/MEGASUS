@@ -1,0 +1,8 @@
+{
+  "name": "web_dashboard",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Web-based dashboard",
+  "entry": "plugin.py",
+  "enabled": false
+}
