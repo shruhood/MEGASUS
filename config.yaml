@@ -1,7 +1,7 @@
 # MEGASUS - Ultimate Android Device Control Toolkit
 # config.yaml
 adb:
-  path: "core/platform-tools/adb.exe"
+  path: "core/platform-tools/"
   auto_start_server: true
 
 auth:
