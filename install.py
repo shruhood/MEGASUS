@@ -33,7 +33,7 @@ def install_platform_tools():
     from scripts.platform_tools import PlatformToolsInstaller
     inst = PlatformToolsInstaller(str(ROOT))
     if inst.install():
-        inst.update_config_yaml()
+        inst.update_config()
         return True
     return False
 
