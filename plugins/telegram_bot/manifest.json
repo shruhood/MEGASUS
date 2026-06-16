@@ -1,0 +1,8 @@
+{
+  "name": "telegram_bot",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Remote control via Telegram Bot",
+  "entry": "plugin.py",
+  "enabled": true
+}
