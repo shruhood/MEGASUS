@@ -96,8 +96,8 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/shruhood/megasus-pro.git
-cd megasus-pro
+git clone https://github.com/shruhood/MEGASUS.git
+cd megasus
 
 # 2. Install dependencies
 pip install -r requirements.txt
