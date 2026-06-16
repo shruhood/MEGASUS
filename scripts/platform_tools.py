@@ -108,23 +108,48 @@ class PlatformToolsInstaller:
         if self.platform == "Termux": return self._termux()
         return self._zip()
     def _termux(self):
-        r = subprocess.run(["pkg", "install", "android-tools", "-y"],
-                           capture_output=True, text=True, timeout=120)
-        if r.returncode != 0: raise PlatformToolsError("pkg failed: " + r.stderr)
-        w = subprocess.run(["which", "adb"], capture_output=True, text=True, timeout=10)
-        if w.returncode == 0:
-            src = Path(w.stdout.strip())
-            self.tools.mkdir(parents=True, exist_ok=True)
-            dst = self.tools / "adb"
-            if dst.exists(): dst.unlink()
-            shutil.copy2(str(src), str(dst))
-            for s in src.parent.iterdir():
-                d = self.tools / s.name
-                if not d.exists():
-                    try: shutil.copy2(str(s), str(d))
-                    except OSError: pass
-            return True
-        return False
+        log.info("Installing via Termux pkg...")
+        try:
+            r = subprocess.run(["pkg", "install", "android-tools", "-y"],
+                               capture_output=True, text=True, timeout=180)
+            log.info("pkg rc=%d", r.returncode)
+            if r.stdout: log.info("stdout: %s", r.stdout[:200])
+            if r.stderr: log.info("stderr: %s", r.stderr[:200])
+        except FileNotFoundError:
+            log.warning("pkg command not found")
+        except subprocess.TimeoutExpired:
+            log.warning("pkg timed out")
+        adb_locs = []
+        try:
+            w = subprocess.run(["which", "adb"], capture_output=True, text=True, timeout=10)
+            if w.returncode == 0 and w.stdout.strip():
+                adb_locs.append(Path(w.stdout.strip()))
+        except Exception: pass
+        prefix = os.environ.get("PREFIX", "/data/data/com.termux/files/usr")
+        for p in [Path(prefix) / "bin" / "adb",
+                  Path("/data/data/com.termux/files/usr/bin/adb"),
+                  Path("/usr/bin/adb"),
+                  Path("/system/bin/adb")]:
+            if p.exists(): adb_locs.append(p)
+        if not adb_locs:
+            log.warning("ADB not found. Run: pkg update && pkg install android-tools")
+            return False
+        src = adb_locs[0]
+        log.info("Found ADB: %s", src)
+        self.tools.mkdir(parents=True, exist_ok=True)
+        dst = self.tools / "adb"
+        if dst.exists(): dst.unlink()
+        shutil.copy2(str(src), str(dst))
+        for s in src.parent.iterdir():
+            d = self.tools / s.name
+            if not d.exists() and s.is_file():
+                try: shutil.copy2(str(s), str(d))
+                except OSError: pass
+        for f in self.tools.iterdir():
+            if f.is_file():
+                try: f.chmod(0o755)
+                except OSError: pass
+        return self.verify_adb()
     def _zip(self):
         url = self.URLS[self.platform]
         zp = self.root / "platform-tools.zip"
