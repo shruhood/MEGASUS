@@ -1,0 +1,8 @@
+{
+  "name": "discord_bot",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Discord bot for remote MEGASUS control — commands, status, screenshots.",
+  "entry": "plugin.py",
+  "enabled": true
+}

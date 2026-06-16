@@ -1,0 +1,8 @@
+{
+  "name": "system_monitor",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Live system monitoring — CPU, RAM, battery, network, processes. Real-time dashboard in terminal.",
+  "entry": "plugin.py",
+  "enabled": true
+}

@@ -1392,10 +1392,7 @@ def main_menu():
             "9": f"{surveillance.MODULE_ICON} Surveillance & Monitoring",
             "10": f"{automation.MODULE_ICON} Automation & Scripts",
             "P": "Plugin Manager",
-            "P": "Plugin Manager",
-            "P": "Plugin Manager",
             "L": "View audit logs",
-            "P": "Plugin Manager",
             "Q": "Quit MEGASUS",
         })
 

@@ -1,0 +1,8 @@
+{
+  "name": "screen_recording",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Record screen with quality settings, convert, compress, and trim.",
+  "entry": "plugin.py",
+  "enabled": true
+}

@@ -1,0 +1,8 @@
+{
+  "name": "notification_system",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Monitor, read, dismiss, and reply to device notifications in real-time.",
+  "entry": "plugin.py",
+  "enabled": true
+}

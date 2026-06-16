@@ -2,7 +2,7 @@
   "name": "web_dashboard",
   "version": "1.0.0",
   "author": "MEGASUS",
-  "description": "Web-based dashboard",
+  "description": "Web dashboard for MEGASUS — device control, status, screenshots via browser.",
   "entry": "plugin.py",
-  "enabled": false
+  "enabled": true
 }

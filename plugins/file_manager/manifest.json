@@ -1,0 +1,8 @@
+{
+  "name": "file_manager",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Enhanced file manager — push/pull with progress, file browser, batch operations.",
+  "entry": "plugin.py",
+  "enabled": true
+}

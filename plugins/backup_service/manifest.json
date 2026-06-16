@@ -1,0 +1,8 @@
+{
+  "name": "backup_service",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Full device backup/restore with progress tracking and selective restore.",
+  "entry": "plugin.py",
+  "enabled": true
+}

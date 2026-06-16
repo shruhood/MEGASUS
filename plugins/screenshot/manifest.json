@@ -1,0 +1,8 @@
+{
+  "name": "screenshot",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Auto-capture screenshots with timestamp naming, burst mode, and gallery.",
+  "entry": "plugin.py",
+  "enabled": true
+}

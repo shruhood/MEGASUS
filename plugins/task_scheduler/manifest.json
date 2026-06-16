@@ -1,0 +1,8 @@
+{
+  "name": "task_scheduler",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Schedule ADB commands/cron-like tasks with recurring support and logging.",
+  "entry": "plugin.py",
+  "enabled": true
+}

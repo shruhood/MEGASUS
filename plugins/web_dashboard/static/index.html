@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEGASUS Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#c9d1d9;font-family:'Segoe UI',monospace}
+.header{background:#161b22;padding:16px 24px;border-bottom:1px solid #30363d}
+.header h1{color:#58a6ff;font-size:1.4em}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.card h3{color:#58a6ff;margin-bottom:12px;font-size:0.9em;text-transform:uppercase}
+.stat{font-size:2em;font-weight:bold;color:#3fb950}
+.label{color:#8b949e;font-size:0.8em}
+pre{background:#0d1117;padding:12px;border-radius:4px;overflow-x:auto;font-size:0.85em;max-height:300px}
+.btn{background:#238636;color:#fff;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;margin:4px;font-size:0.85em}
+.btn:hover{background:#2ea043}
+.btn.red{background:#da3633}
+.btn.red:hover{background:#f85149}
+input[type=text],input[type=number]{background:#0d1117;border:1px solid #30363d;color:#c9d1d9;padding:6px 10px;border-radius:4px;width:100%;margin:4px 0}
+.status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status.online{background:#3fb950}
+.status.offline{background:#f85149}
+</style>
+</head>
+<body>
+<div class="header"><h1>🔧 MEGASUS Dashboard</h1></div>
+<div class="container">
+<div class="grid">
+  <div class="card"><h3>Battery</h3><div class="stat" id="bat_level">--</div><div class="label" id="bat_status">Loading...</div></div>
+  <div class="card"><h3>Device</h3><div class="label">Model</div><div id="dev_model" style="font-size:1.2em;color:#fff">--</div><div class="label" style="margin-top:8px">Android</div><div id="dev_android" style="color:#fff">--</div></div>
+  <div class="card"><h3>Network</h3><div class="label">IP</div><div id="net_ip" style="color:#fff;font-size:1.1em">--</div><div class="label" style="margin-top:8px">WiFi</div><div id="net_wifi" style="color:#fff">--</div></div>
+</div>
+<div class="card" style="margin-bottom:16px"><h3>Quick Commands</h3>
+  <button class="btn" onclick="runCmd('screenshot')">📸 Screenshot</button>
+  <button class="btn" onclick="runCmd('reboot')">🔄 Reboot</button>
+  <button class="btn red" onclick="runCmd('shutdown')">⏻ Shutdown</button>
+  <button class="btn" onclick="runCmd('lock')">🔒 Lock</button>
+  <button class="btn" onclick="runCmd('wake')">💡 Wake</button>
+</div>
+<div class="card" style="margin-bottom:16px"><h3>Custom ADB Shell</h3>
+  <input type="text" id="cmdInput" placeholder="adb shell command..." onkeydown="if(event.key==='Enter')runCustom()">
+  <button class="btn" onclick="runCustom()">Run</button>
+</div>
+<div class="card"><h3>Output</h3><pre id="output">Ready...</pre></div>
+</div>
+<script>
+async function runCmd(cmd){
+  document.getElementById('output').textContent='Running...';
+  try{const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})});const t=await r.text();document.getElementById('output').textContent=t}catch(e){document.getElementById('output').textContent='Error: '+e}
+}
+async function runCustom(){
+  const c=document.getElementById('cmdInput').value;if(!c)return;
+  document.getElementById('output').textContent='Running: '+c+'...';
+  try{const r=await fetch('/api/shell',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:c})});const t=await r.text();document.getElementById('output').textContent=t}catch(e){document.getElementById('output').textContent='Error: '+e}
+}
+async function refresh(){
+  try{const r=await fetch('/api/status');const d=await r.json();
+    document.getElementById('bat_level').textContent=(d.battery?.level||'?')+'%';
+    document.getElementById('bat_status').textContent=d.battery?.status||'?';
+    document.getElementById('dev_model').textContent=d.device?.model||'?';
+    document.getElementById('dev_android').textContent=d.device?.android||'?';
+    document.getElementById('net_ip').textContent=d.network?.ip||'?';
+    document.getElementById('net_wifi').textContent=d.network?.wifi||'?';
+  }catch(e){}
+}
+setInterval(refresh,5000);refresh();
+</script>
+</body>
+</html>

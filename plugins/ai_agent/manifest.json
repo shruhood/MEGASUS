@@ -1,0 +1,8 @@
+{
+  "name": "ai_agent",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "On-device AI via Termux — run LLM inference, chat, and AI-powered automation.",
+  "entry": "plugin.py",
+  "enabled": true
+}

@@ -1,0 +1,8 @@
+{
+  "name": "memory_system",
+  "version": "1.0.0",
+  "author": "MEGASUS",
+  "description": "Auto-save device state snapshots with diff comparison and restore points.",
+  "entry": "plugin.py",
+  "enabled": true
+}
