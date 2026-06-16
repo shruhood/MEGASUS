@@ -29,10 +29,14 @@ ADB_TIMEOUT = CONFIG.get("connection", {}).get("default_timeout", 10)
 
 
 def _adb_binary():
-    """Return full path to adb.exe"""
+    """Return full path to adb binary (cross-platform)."""
     if ADB_PATH:
-        return os.path.join(ADB_PATH, "adb.exe")
-    return "adb"
+        base = os.path.join(ADB_PATH, "adb.exe" if os.name == "nt" else "adb")
+        if os.path.exists(base): return base
+        alt = os.path.join(ADB_PATH, "adb" if os.name == "nt" else "adb.exe")
+        if os.path.exists(alt): return alt
+        return base
+    return "adb.exe" if os.name == "nt" else "adb"
 
 
 def _run(cmd, timeout=None, shell=False):
