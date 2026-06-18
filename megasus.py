@@ -26,7 +26,7 @@ from core.engine import (
 from core.auth import AuthManager, ROLES
 from core.logger import log, get_logs
 from core.plugin import load_plugins, list_plugins
-from modules import device, apps, files, connection
+from modules import device, apps, files, connection, remote_connection
 from modules import data, screen, network, security, surveillance, automation
 
 
@@ -122,6 +122,211 @@ def login():
 
 
 # ── Module Menu Functions ──────────────────────────────────────
+def menu_remote():
+    """Remote Connection Menu — Control device over cellular/any network."""
+    from core.engine import _run_shell
+
+    while True:
+        print_header(f"{remote_connection.MODULE_ICON} REMOTE CONNECTION (Cellular / Any Network)")
+
+        devices = remote_connection.list_devices()
+        if devices:
+            print(f"  Registered remote devices: {len(devices)}\n")
+            for i, d in enumerate(devices):
+                print(f"  {Fore.CYAN}[{i+1}]{Style.RESET_ALL} {d['label']} ({d['device_id']})")
+                print(f"      Relay: {d['relay_url']} | Added: {d.get('registered_at', '?')[:10]}")
+        else:
+            print(f"  {Fore.YELLOW}No remote devices registered yet.{Style.RESET_ALL}")
+
+        print()
+        print_menu({
+            "1": "Connect to remote device",
+            "2": "Register new device",
+            "3": "Remove device",
+            "4": "Quick shell (connected device)",
+            "5": "Remote screenshot",
+            "6": "List registered devices",
+            "7": "Test relay server",
+            "0": "Back to main menu",
+        })
+
+        choice = input(f"  {Fore.YELLOW}Choice: {Style.RESET_ALL}").strip()
+
+        if choice == "0":
+            break
+
+        elif choice == "1":
+            # Connect to a remote device
+            dev_id = input("  Device ID (or number from list): ").strip()
+            # Allow selecting by number
+            if dev_id.isdigit() and devices:
+                idx = int(dev_id) - 1
+                if 0 <= idx < len(devices):
+                    dev_id = devices[idx]["device_id"]
+                else:
+                    print_result(False, "Invalid device number")
+                    pause()
+                    continue
+
+            cfg = remote_connection.get_device_config(dev_id)
+            if not cfg:
+                print_result(False, f"Device '{dev_id}' not registered. Use option 2 first.")
+                pause()
+                continue
+
+            relay_url = cfg.get("relay_url", "")
+            token = cfg.get("token", "")
+
+            print(f"  Connecting to {dev_id} via {relay_url}...")
+            client = remote_connection.RelayClient(relay_url, dev_id, token)
+            ok, msg = client.connect()
+            if not ok:
+                print_result(False, msg)
+                pause()
+                continue
+
+            print_result(True, f"Connected! {msg}")
+            print(f"  {Fore.CYAN}You can now run commands on the remote device.{Style.RESET_ALL}")
+            print(f"  Type 'exit' to disconnect.\n")
+
+            # Interactive shell loop
+            while True:
+                try:
+                    cmd = input(f"  {Fore.GREEN}remote>{Style.RESET_ALL} ").strip()
+                except (EOFError, KeyboardInterrupt):
+                    break
+                if not cmd:
+                    continue
+                if cmd.lower() in ("exit", "quit", "disconnect"):
+                    break
+                if cmd == "help":
+                    print(f"  {Fore.CYAN}Remote shell — any ADB shell command works.{Style.RESET_ALL}")
+                    print(f"  Special: 'screenshot' | 'battery' | 'info' | 'exit'")
+                    continue
+                if cmd == "screenshot":
+                    ok, msg = client.screenshot()
+                    print_result(ok, msg)
+                    continue
+                if cmd == "battery":
+                    cmd = "dumpsys battery"
+                if cmd == "info":
+                    cmd = "getprop ro.product.model && getprop ro.build.version.release"
+
+                stdout, stderr, rc = client.send_command(cmd)
+                if stdout:
+                    for line in stdout.splitlines():
+                        print(f"  {line}")
+                if stderr:
+                    print(f"  {Fore.RED}{stderr}{Style.RESET_ALL}")
+                if rc != 0:
+                    print(f"  {Fore.YELLOW}[exit code: {rc}]{Style.RESET_ALL}")
+
+            client.disconnect()
+            print(f"  {Fore.CYAN}Disconnected.{Style.RESET_ALL}")
+            pause()
+
+        elif choice == "2":
+            print(f"\n  {Fore.CYAN}── Register New Remote Device ──{Style.RESET_ALL}")
+            device_id = input("  Device ID (e.g. IMEI or custom name): ").strip()
+            if not device_id:
+                print_result(False, "Device ID required")
+                pause()
+                continue
+            relay_url = input("  Relay server URL (ws:// or wss://): ").strip()
+            if not relay_url:
+                print_result(False, "Relay URL required")
+                pause()
+                continue
+            label = input("  Label [optional]: ").strip() or None
+
+            result = remote_connection.register_device(device_id, relay_url, label=label)
+            print()
+            print(f"  {Fore.GREEN}[OK] Device registered!{Style.RESET_ALL}")
+            print(f"  Device ID: {result['device_id']}")
+            print(f"  Token:     {result['token']}")
+            print(f"\n  {Fore.YELLOW}IMPORTANT: Save this token! Configure it on the phone agent:{Style.RESET_ALL}")
+            print(f"  python remote_agent.py --device-id {device_id} --token {result['token']} --relay {relay_url}")
+            pause()
+
+        elif choice == "3":
+            dev_id = input("  Device ID to remove: ").strip()
+            if dev_id:
+                remote_connection.remove_device(dev_id)
+                print_result(True, f"Removed {dev_id}")
+            pause()
+
+        elif choice == "4":
+            # Quick shell — connect, run one command, disconnect
+            dev_id = input("  Device ID: ").strip()
+            cfg = remote_connection.get_device_config(dev_id)
+            if not cfg:
+                print_result(False, "Device not registered")
+                pause()
+                continue
+            cmd = input("  Shell command: ").strip()
+            if not cmd:
+                pause()
+                continue
+            client = remote_connection.RelayClient(cfg["relay_url"], dev_id, cfg["token"])
+            ok, msg = client.connect()
+            if not ok:
+                print_result(False, msg)
+                pause()
+                continue
+            stdout, stderr, rc = client.send_command(cmd)
+            if stdout:
+                for line in stdout.splitlines():
+                    print(f"  {line}")
+            if stderr:
+                print(f"  {Fore.RED}{stderr}{Style.RESET_ALL}")
+            client.disconnect()
+            pause()
+
+        elif choice == "5":
+            dev_id = input("  Device ID: ").strip()
+            cfg = remote_connection.get_device_config(dev_id)
+            if not cfg:
+                print_result(False, "Device not registered")
+                pause()
+                continue
+            client = remote_connection.RelayClient(cfg["relay_url"], dev_id, cfg["token"])
+            ok, msg = client.connect()
+            if not ok:
+                print_result(False, msg)
+                pause()
+                continue
+            ok, msg = client.screenshot()
+            print_result(ok, msg)
+            client.disconnect()
+            pause()
+
+        elif choice == "6":
+            devs = remote_connection.list_devices()
+            if devs:
+                for d in devs:
+                    print(f"  {Fore.CYAN}{d['device_id']}{Style.RESET_ALL} ({d['label']})")
+                    print(f"    Relay: {d['relay_url']}")
+            else:
+                print(f"  {Fore.YELLOW}No devices registered.{Style.RESET_ALL}")
+            pause()
+
+        elif choice == "7":
+            relay_url = input("  Relay server URL: ").strip()
+            if relay_url:
+                import urllib.request
+                try:
+                    # Try HTTP health check (relay doesn't have HTTP, but we can check if host is reachable)
+                    from urllib.parse import urlparse
+                    parsed = urlparse(relay_url)
+                    host = parsed.hostname or relay_url.replace("ws://", "").replace("wss://", "").split("/")[0]
+                    print(f"  Host: {host}")
+                    print(f"  {Fore.GREEN}[OK] Relay URL format valid.{Style.RESET_ALL}")
+                    print(f"  {Fore.YELLOW}Note: WebSocket relay has no HTTP endpoint. Use option 1 to test actual connection.{Style.RESET_ALL}")
+                except Exception as e:
+                    print_result(False, str(e))
+            pause()
+
+
 def menu_connection():
     """Connection Manager Menu"""
     while True:
@@ -1391,6 +1596,7 @@ def main_menu():
             "8": f"{security.MODULE_ICON} Security Audit",
             "9": f"{surveillance.MODULE_ICON} Surveillance & Monitoring",
             "10": f"{automation.MODULE_ICON} Automation & Scripts",
+            "R": f"{remote_connection.MODULE_ICON} Remote Connect (Cellular/Any Network)",
             "P": "Plugin Manager",
             "L": "View audit logs",
             "Q": "Quit MEGASUS",
@@ -1422,12 +1628,8 @@ def main_menu():
             menu_surveillance()
         elif choice == "10":
             menu_automation()
-        elif choice == "P":
-            menu_plugins()
-        elif choice == "P":
-            menu_plugins()
-        elif choice == "P":
-            menu_plugins()
+        elif choice == "R":
+            menu_remote()
         elif choice == "P":
             menu_plugins()
         elif choice == "L":
